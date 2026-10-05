@@ -1266,9 +1266,11 @@ function syncPomodoroDisplay(){
     activeEl.textContent=activeStudySession ? `📚 ${activeStudySession.subject}${activeStudySession.topic ? ` · ${activeStudySession.topic}` : ""} · ${activeStudySession.duration} min` : "";
     activeEl.style.display=activeStudySession ? "block" : "none";
   }
-  const focusEl=document.getElementById("pomodoro-focus-total");
   const totalSeconds=pomodoroHistoryTotal()+(pomodoroState.accumulated||0);
+  const focusEl=document.getElementById("pomodoro-focus-total");
   if(focusEl)focusEl.textContent=`${Math.floor(totalSeconds/3600)}h ${Math.floor((totalSeconds%3600)/60)}m`;
+  const homeFocusEl=document.getElementById("home-focus-total");
+  if(homeFocusEl)homeFocusEl.textContent=`${Math.floor(totalSeconds/3600)}h ${Math.floor((totalSeconds%3600)/60)}m`;
 }
 function ensurePomodoroHistory(){if(!Array.isArray(state.data.pomodoroHistory))state.data.pomodoroHistory=[];return state.data.pomodoroHistory;}
 function pomodoroHistoryTotal(){return ensurePomodoroHistory().reduce((s,x)=>s+Math.max(0,Number(x.seconds)||0),0);}
@@ -1399,7 +1401,7 @@ function home() {
   return appShell(`
     <section class="v5-home-summary">
       <div class="v5-summary-top"><div><span class="eyebrow">${lang?"YOUR SUMMARY":"SEU RESUMO"}</span><h1>${lang?`Hello, ${esc(firstName)}.`:`Olá, ${esc(firstName)}.`}</h1><p>${lang?"Here is what matters in your routine today.":"Aqui está o que importa na sua rotina hoje."}</p></div><span class="v5-weather" id="lidire-weather">🌡️ ${getWeatherLabel()}</span></div>
-      <div class="v5-kpis"><div><small>${lang?"PRODUCTIVITY":"PRODUTIVIDADE"}</small><strong>${Math.min(100, Math.max(0, 100-pending*5))}%</strong></div><div><small>${lang?"TASKS":"TAREFAS"}</small><strong>${pending}/${state.data.tarefas.length}</strong></div><div><small>${lang?"FOCUS":"FOCO"}</small><strong>${Math.max(0, Math.round((goals+commitments)*20/60))}h ${Math.max(0,(goals+commitments)*20)%60}m</strong></div></div>
+      <div class="v5-kpis"><div><small>${lang?"PRODUCTIVITY":"PRODUTIVIDADE"}</small><strong>${Math.min(100, Math.max(0, 100-pending*5))}%</strong></div><div><small>${lang?"TASKS":"TAREFAS"}</small><strong>${pending}/${state.data.tarefas.length}</strong></div><div><small>${lang?"FOCUS":"FOCO"}</small><strong id="home-focus-total">${Math.floor((pomodoroHistoryTotal()+(pomodoroState.accumulated||0))/3600)}h ${Math.floor(((pomodoroHistoryTotal()+(pomodoroState.accumulated||0))%3600)/60)}m</strong></div></div>
     </section>
     ${next?`<section class="v5-next-card"><span class="v5-label">${lang?"NEXT":"PRÓXIMO"}</span><h2>${esc(next.title||next.name||"Compromisso")}</h2><p>◷ ${esc(next.time||"—")} ${next.endTime?`- ${esc(next.endTime)}`:""}</p><button class="primary-button compact" data-page="agenda">▣ ${lang?"Open calendar":"Abrir agenda"}</button></section>`:""}
     <section class="v5-section-head"><span>✦</span><h2>${lang?"AI Suggestions":"Sugestões da IA"}</h2></section>
